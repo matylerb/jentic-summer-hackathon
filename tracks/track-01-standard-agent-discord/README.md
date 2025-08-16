@@ -1,229 +1,155 @@
-# Track 01 – Standard Agent (Discord Bot)
+# Discord Agent Bot with Groq and Jentic
 
-**Goal**: Build a Discord bot powered by Standard Agent that can execute complex tasks using Jentic's tool ecosystem.
+This is an advanced Discord bot that uses the Groq API for powerful language processing and the Jentic platform to interact with external tools. The bot features a modern slash command interface, remembers conversation context, and provides rich, embedded responses.
 
-**Time Estimate**: 3-6 hours  
-**Difficulty**: Beginner to Intermediate  
-**Perfect for**: Developers new to AI agents who want to see immediate, interactive results
+## ✨ Features
 
-## What You'll Build
+- **Modern Discord UX**: Uses slash commands (`/wiki`, `/help`, `/reset`, `/chess` ) instead of old-style prefixes.
+- **AI-Powered Agent**: Leverages the speed of the Groq API (running Llama 3) to understand and respond to user queries.
+- **Tool Integration**: Connects to the Jentic platform to discover and execute tools, allowing the agent to perform actions.
+- **Conversation Context**: Remembers the history of your conversation, allowing for natural follow-up questions.
+- **Rich Embed Responses**: Formats replies in clean, easy-to-read Discord embeds.
+- **Progress Indicators**: Shows a "Bot is thinking..." message for long-running tasks.
+- **Fun Games**: Blackjack and Chess, test your luck and mind! 
+- **Owner-Only Sync Command**: A secure `!sync` command for instantly updating slash commands during development.
 
-A Discord bot that users can interact with to:
-- Execute multi-step tasks through natural language
-- Access real-world APIs via Jentic's tool platform
-- Demonstrate autonomous reasoning and error recovery
+---
 
-**Example interactions**:
-- User: "!agent Find the latest 3 AI papers on Figshare and summarize them"
-- Bot: *Plans task → Searches Figshare → Retrieves papers → Summarizes → Posts results*
+## 🚀 Setup Instructions
 
-## Prerequisites
+Follow these steps to get the bot running in your own server.
 
-### Technical Requirements
-- Python 3.11+
-- Basic familiarity with Discord bots
-- Understanding of environment variables
+### 1. Prerequisites
 
-### Accounts & Credentials
-- **Discord Developer Account** - Create a bot application
-- **Jentic Account** - Agent API key with appropriate scopes
-- **LLM Provider** - API key for OpenAI, Anthropic, or Google
+- Python 3.8 or higher.
+- A Discord account and a server where you have administrator permissions.
+- API keys from Discord, Groq, and Jentic.
 
-### Knowledge Prerequisites
-- Basic Python programming
-- Understanding of async/await (helpful but not required)
-- Familiarity with command-line interfaces
+### 2. Create a Discord Application
 
-## Step-by-Step Walkthrough
+1.  Go to the [Discord Developer Portal](https://discord.com/developers/applications).
+2.  Click **"New Application"** and give it a name.
+3.  Go to the **"Bot"** tab, click **"Reset Token"**, and copy your bot token. **This is your `DISCORD_TOKEN`**.
 
-### Phase 1: Environment Setup (30 minutes)
+### 3. Get API Keys
 
-#### 1. Create Discord Bot
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Click "New Application" → Name it (e.g., "Hackathon Agent Bot")
-3. Go to "Bot" section → "Add Bot"
-4. Copy the bot token (keep it secret!)
-5. Under "Privileged Gateway Intents" enable:
-   - Message Content Intent
-   - Server Members Intent (optional)
+- **Groq**: Go to the [Groq Console](https://console.groq.com/keys) to get your **`GROQ_API_KEY`**.
+- **Jentic**: Go to your Jentic dashboard to get your **`JENTIC_AGENT_API_KEY1`**.
 
-#### 2. Invite Bot to Server
-1. Go to "OAuth2" → "URL Generator"
-2. Select scopes: `bot`
-3. Select permissions: `Send Messages`, `Read Message History`, `Use Slash Commands`
-4. Copy generated URL, open in browser, invite to your test server
+### 4. Project Setup
 
-#### 3. Set Up Development Environment
-```bash
-# Clone the starter template
-git clone [this track's template directory]
-cd track-01-standard-agent-discord
+1.  **Clone the Repository (or download the code)**
+    ```bash
+    git clone <your-repository-url>
+    cd <your-repository-folder>
+    ```
 
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+2.  **Create a Virtual Environment**
+    ```bash
+    python -m venv .venv
+    # On Windows
+    .\.venv\Scripts\activate
+    # On macOS/Linux
+    source .venv/bin/activate
+    ```
 
-# Install dependencies
-pip install -r requirements.txt
-```
+3.  **Install Dependencies**
+    Create a file named `requirements.txt` with the following content:
+    ```
+    discord.py
+    python-dotenv
+    groq
+    jentic
+    ```
+    Then, run the installation command:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-#### 4. Configure Environment Variables
-```bash
-# Copy the example environment file
-cp .env.example .env
+4.  **Configure Environment Variables**
+    Create a file named `.env` in your project's main folder and add your secret keys:
+    ```env
+    DISCORD_TOKEN="your_discord_bot_token_here"
+    GROQ_API_KEY="your_groq_api_key_here"
+    JENTIC_AGENT_API_KEY1="your_jentic_api_key_here"
+    ```
 
-# Edit .env with your credentials
-DISCORD_BOT_TOKEN="your-discord-bot-token"
-JENTIC_AGENT_API_KEY="your-jentic-agent-api-key"
-OPENAI_API_KEY="your-openai-api-key"  # or ANTHROPIC_API_KEY, GEMINI_API_KEY
-LLM_MODEL="gpt-4"  # or claude-sonnet-4, gemini-pro
-```
+### 5. Invite the Bot to Your Server
 
-### Phase 2: Basic Bot Implementation (60 minutes)
+1.  Go back to the **Discord Developer Portal** -> Your Application.
+2.  Go to **"OAuth2"** -> **"URL Generator"**.
+3.  In the "Scopes" section, tick both **`bot`** and **`applications.commands`**.
+4.  In the "Bot Permissions" section that appears, select **"Send Messages"** and **"Read Message History"**.
+5.  Copy the generated URL, paste it into your browser, and invite the bot to your server.
 
-#### 1. Test the Starter Bot
-```bash
-python main.py
-```
+### 6. Run the Bot
 
-You should see:
-```
-✅ Discord bot logged in as YourBot#1234
-✅ Standard Agent initialized
-🤖 Bot ready! Try '!ping' in Discord
-```
+1.  Make sure your virtual environment is active.
+2.  Run the main Python script from your terminal:
+    ```bash
+    python main.py
+    ```
+    You should see a "We have logged in as..." message.
 
-#### 2. Test Basic Commands
-In your Discord server:
-- `!ping` → Bot responds with "Pong!"
-- `!help` → Shows available commands
-- `!agent hello` → Bot uses Standard Agent to respond
+### 7. Sync Slash Commands
 
-#### 3. Understand the Code Structure
-The main.py file shows how to:
-- Connect to Discord with proper intents
-- Initialize Standard Agent with your model
-- Handle both text commands and slash commands
-- Process user queries through the agent
-- Send results back to Discord
+1.  In any channel in your Discord server, type the message `!sync`.
+2.  The bot will confirm that the slash commands have been synced. They should now be available to use.
 
-### Phase 3: Enhanced Functionality (90-120 minutes)
+---
 
-#### 1. Add Slash Commands
-Implement modern Discord slash commands for better UX.
+## 📖 Usage Examples
 
-#### 2. Add Progress Indicators
-Show users the agent is working on complex tasks.
+### `/agent`
+Ask the agent to perform a task. It will use its tools if necessary.
 
-#### 3. Add Error Handling & User Feedback
-Provide helpful error messages and troubleshooting tips.
+> **You:** `/agent query: send a welcome message to the general channel`
+>
+> **Bot:** (Thinking...)
+>
+> **Bot:** (Calls the `discord_send_message` tool)
+>
+> **Bot:** (Embed) **Query:** send a welcome message to the general channel
+> I have sent the welcome message to the #general channel as you requested.
 
-### Phase 4: Advanced Features (Optional, 60+ minutes)
+### `/help`
+Displays a list of available commands.
 
-#### 1. Context-Aware Conversations
-Track conversation history for multi-turn interactions.
+> **You:** `/help`
+>
+> **Bot:** (Embed) **Bot Help**
+> - **/agent `query`**: Ask the agent to perform a task...
+> - **/reset**: Clears your personal conversation history...
+> - **/help**: Shows this help message.
 
-#### 2. Rich Discord Embeds
-Make responses more visually appealing.
+---
 
-#### 3. Command Categories & Help System
-Organize functionality into logical groups.
+## ⚙️ Supported Capabilities
 
-## Testing Your Bot
+- **AI Model**: Groq (llama3-70b-8192)
+- **Tool Platform**: Jentic
+- **Available Tools**:
+    - **Discord**: The agent can use tools to interact with Discord (e.g., send messages, create channels), provided they are available on your Jentic account.
 
-### Basic Functionality Tests
-- [ ] Bot connects to Discord successfully
-- [ ] Responds to `!ping` command
-- [ ] Can execute simple agent queries
-- [ ] Error messages are helpful and user-friendly
+---
 
-### Integration Tests
-- [ ] Agent can access Jentic tools (try a search query)
-- [ ] Multi-step tasks work (try "find and summarize")
-- [ ] Authentication works for protected APIs
-- [ ] Bot handles rate limits gracefully
+## 🔧 Troubleshooting Guide
 
-### User Experience Tests
-- [ ] Commands are intuitive and discoverable
-- [ ] Response times are reasonable (< 30 seconds for most tasks)
-- [ ] Error messages help users fix issues
-- [ ] Bot behavior is consistent
+- **Slash Commands Not Appearing**:
+    1.  Make sure you re-invited the bot with both the `bot` and `applications.commands` scopes (Step 5).
+    2.  Run the `!sync` command in your server.
+    3.  If they still don't appear, fully restart your Discord client (Ctrl+R on the desktop app).
 
-## Deliverables
+- **"Invalid or inactive API key" Error**:
+    1.  Double-check that the keys in your `.env` file are correct and have no extra spaces.
+    2.  Ensure the names in the `.env` file (`DISCORD_TOKEN`, `GROQ_API_KEY`, `JENTIC_AGENT_API_KEY1`) exactly match the names in the script.
 
-### Minimum Viable Product (MVP)
-- [ ] Working Discord bot that connects and responds
-- [ ] Integration with Standard Agent for task execution
-- [ ] At least 2 working commands (e.g., `!ask` and `!help`)
-- [ ] Basic error handling
-- [ ] Clear setup instructions in README
+- **"Could not find a 'discord' tool" Error**:
+    1.  This means your Jentic API key does not have permission to access a tool with "discord" in its name.
+    2.  Log in to your Jentic account and ensure the Discord tool/API is enabled for your key.
 
-### Enhanced Version
-- [ ] Slash commands for modern Discord UX
-- [ ] Progress indicators for long-running tasks
-- [ ] Rich embed responses
-- [ ] Conversation context awareness
-- [ ] Multiple specialized commands
-
-### Documentation
-- [ ] Complete README with setup instructions
-- [ ] Example interactions with screenshots
-- [ ] Troubleshooting guide
-- [ ] List of supported capabilities/APIs
-
-## Common Challenges & Solutions
-
-### Discord API Issues
-**Problem**: Bot doesn't respond to messages
-**Solutions**:
-- Check Message Content Intent is enabled
-- Verify bot has proper permissions in the server
-- Ensure bot token is correct and not expired
-
-### Standard Agent Issues
-**Problem**: "No tools found" or "401 Unauthorized"
-**Solutions**:
-- Verify `JENTIC_AGENT_API_KEY` is set correctly
-- Check agent scope includes required APIs in Jentic dashboard
-- Test API access with a simple Jentic SDK call
-
-### Performance Issues
-**Problem**: Bot responses are slow or timeout
-**Solutions**:
-- Implement async patterns properly
-- Add progress indicators for user feedback
-- Set reasonable timeouts on agent calls
-- Cache frequently used results
-
-## Getting Help
-
-### Quick Debugging
-```bash
-# Test Jentic connection
-python -c "
-import os
-from jentic import Jentic
-client = Jentic()
-print('✅ Jentic connection works')
-"
-
-# Test Discord connection
-python -c "
-import discord
-import os
-client = discord.Client(intents=discord.Intents.default())
-@client.event
-async def on_ready():
-    print(f'✅ Discord connection works: {client.user}')
-    await client.close()
-client.run(os.getenv('DISCORD_BOT_TOKEN'))
-"
-```
-
-### Resources
-- **Discord.py Documentation**: https://discordpy.readthedocs.io/
-- **Standard Agent Examples**: https://github.com/jentic/standard-agent/tree/main/examples
-- **Jentic SDK Docs**: https://docs.jentic.com/reference/sdks/python/
-- **Discord #summer-hackathon**: For real-time help
-
-Remember: The goal is to learn and build something useful. Focus on getting a working bot first, then add enhancements if time permits!
+- **`503 Service Unavailable` or `Connection refused` Errors**:
+    1.  This is a network issue, not a code problem.
+    2.  Check the status page for the relevant service (e.g., Groq).
+    3.  Temporarily disable any firewalls or VPNs to see if they are blocking the connection.
+    4.  Try running the bot from a different network (e.g., a mobile hotspot).
